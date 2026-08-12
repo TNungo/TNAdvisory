@@ -6,10 +6,11 @@
 import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
 import { useState } from "react";
 
-const heroImage = "/manus-storage/tn_advisory_web_hero_b49c3a3a.jpg";
-const detailImage = "/manus-storage/tn_advisory_web_detail_112e7e6c.jpg";
-const mark = "/manus-storage/tn_advisory_web_mark_60921cbc.png";
+const heroImage = "/shaah-shahidh--subrrYxv8A-unsplash.jpg";
+const detailImage = "/esmonde-yong-wFpJV5EWrSM-unsplash.jpg";
+const mark = "/tn_advisory_highres_logo.png";
 const fullLogo = "/tn_advisory_highres_logo.png";
+
 
 const capabilities = [
   { number: "01", title: "Technology & software", text: "Designing the digital, data and systems capability required to make strategic change executable." },
