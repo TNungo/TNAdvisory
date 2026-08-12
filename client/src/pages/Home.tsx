@@ -9,7 +9,7 @@ import { useState } from "react";
 const heroImage = "/manus-storage/tn_advisory_web_hero_b49c3a3a.jpg";
 const detailImage = "/manus-storage/tn_advisory_web_detail_112e7e6c.jpg";
 const mark = "/manus-storage/tn_advisory_web_mark_60921cbc.png";
-const fullLogo = "/manus-storage/tn_advisory_highres_logo_c14a26d9.png";
+const fullLogo = "/tn_advisory_highres_logo.png";
 
 const capabilities = [
   { number: "01", title: "Technology & software", text: "Designing the digital, data and systems capability required to make strategic change executable." },
