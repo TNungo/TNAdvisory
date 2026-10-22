@@ -21,8 +21,8 @@ Configure these Vercel environment variables for Production and Preview:
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SITE_ORIGIN=https://tcnconsultants.com`
 
-The public enquiry form posts to `/api/briefing`. The service-role key is used only inside the Vercel function and is never shipped to the browser.
+The public enquiry form posts to `/api/briefing` with name, work email, help route, optional region and optional brief context. The service-role key is used only inside the Vercel function and is never shipped to the browser.
 
 ## Brand and content
 
-The page uses the supplied TCN mark and locally optimized Nairobi, Cape Town and global trade-port photography. The homepage positioning is Nairobi / Cape Town / Worldwide, with capability and track-record language grounded in the supplied TCN brief.
+The page uses the supplied TCN mark and locally optimized Nairobi, Cape Town and global trade-port photography. The homepage positioning is Nairobi / Cape Town / Worldwide, with capability and selected-engagement language grounded in the supplied TCN brief. Selected work is explicitly labeled as context rather than outcome case studies unless publishable evidence is added.
