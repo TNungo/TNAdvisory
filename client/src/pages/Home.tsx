@@ -1,99 +1,95 @@
-/**
- * TN Advisory web mockup — Institutional White Space direction.
- * Use navy for institutional authority, champagne gold for decisive emphasis,
- * and asymmetric editorial layouts to keep the site executive rather than generic.
- */
-import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
-import { useState } from "react";
-
-const heroImage = "/shaah-shahidh--subrrYxv8A-unsplash.jpg";
-const detailImage = "/esmonde-yong-wFpJV5EWrSM-unsplash.jpg";
-const mark = "/tn_advisory_highres_logo.png";
-const fullLogo = "/tn_advisory_highres_logo.png";
-
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import { FormEvent, useState } from "react";
 
 const capabilities = [
-  { number: "01", title: "Technology & software", text: "Designing the digital, data and systems capability required to make strategic change executable." },
-  { number: "02", title: "Trade & market access", text: "Connecting policy, compliance, export readiness and cross-border operating confidence." },
-  { number: "03", title: "Transformation", text: "Turning institutional ambition into sequenced operating models, governance and delivery." },
-  { number: "04", title: "Development finance", text: "Structuring priorities, partnerships and funding narratives around inclusive growth." },
+  { number: "01", title: "Strategic management & executive advisory", text: "Market-entry blueprints, organizational architecture and board-level advisory for cross-border expansion." },
+  { number: "02", title: "Corporate administration & governance", text: "Entity management, registration strategy and governance frameworks for complete market legitimacy." },
+  { number: "03", title: "Commodity logistics & facilitation", text: "Trade corridors, logistics alignment and asset positioning for high-value international markets." },
+  { number: "04", title: "Impact enterprise & ESG scaling", text: "Operating frameworks for scalable healthcare and social-impact infrastructure." },
+];
+
+const locations = [
+  { label: "NAIROBI / 01", title: "East African market perspective", image: "/assets/nairobi.jpg", alt: "Nairobi skyline and green urban foreground", className: "location-card-nairobi" },
+  { label: "CAPE TOWN / 02", title: "Southern African operating context", image: "/assets/capetown.jpg", alt: "Cape Town and Table Mountain in warm evening light", className: "location-card-cape" },
+  { label: "WORLDWIDE / 03", title: "Trade corridors and global hubs", image: "/assets/trade-port.jpg", alt: "Container cranes and cargo ships at a global port at night", className: "location-card-trade" },
 ];
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [caseStudy, setCaseStudy] = useState<"commodities" | "neuro">("commodities");
+  const [formStatus, setFormStatus] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const closeMenu = () => setOpen(false);
+  const secureLine = () => { window.location.href = "mailto:tracy@tcnconsultants.com?subject=Secure%20executive%20briefing"; };
+
+  async function submitBriefing(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = new FormData(form);
+    if (String(values.get("website") || "").trim()) { setFormStatus("Briefing received."); return; }
+    setSubmitting(true);
+    setFormStatus("Sending your briefing…");
+    try {
+      const response = await fetch("/api/briefing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: String(values.get("name") || "").trim(),
+          email: String(values.get("email") || "").trim(),
+          region: String(values.get("region") || "").trim(),
+          website: String(values.get("website") || "").trim(),
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "The briefing could not be saved.");
+      form.reset();
+      setFormStatus("Briefing received. The corporate team will respond by email.");
+    } catch (error) {
+      setFormStatus(`${error instanceof Error ? error.message : "The briefing could not be saved."} Please email tracy@tcnconsultants.com.`);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-[#f8f8f5] text-[#102b50] selection:bg-[#c8a15a]/30">
-      <header className="site-header">
-        <div className="container-wide header-inner">
-          <a href="#top" className="brand-link" aria-label="TN Advisory home">
-            <img src={fullLogo} alt="TN Advisory" className="full-logo" />
-          </a>
-          <button className="mobile-menu" onClick={() => setOpen(!open)} aria-label="Toggle navigation">
-            {open ? <X size={22} /> : <Menu size={22} />}
-          </button>
-          <nav className={open ? "main-nav open" : "main-nav"}>
-            <a href="#approach" onClick={() => setOpen(false)}>Approach</a>
-            <a href="#capabilities" onClick={() => setOpen(false)}>Capabilities</a>
-            <a href="#profile" onClick={() => setOpen(false)}>Profile</a>
-            <a href="#selected-work" onClick={() => setOpen(false)}>Projects</a>
-            <a href="#contact" className="nav-cta" onClick={() => setOpen(false)}>Start a conversation <ArrowUpRight size={15} /></a>
+    <div className="site-shell">
+      <a className="skip-link" href="#main-content">Skip to content</a>
+      <header className="site-header" data-header>
+        <div className="shell header-inner">
+          <a className="brand" href="#top" aria-label="TCN Consultants home"><span className="brand-mark"><img src="/assets/tcn-mark.png" alt="" /></span><span className="brand-wordmark">TCN <span>CONSULTANTS</span></span></a>
+          <button className="menu-toggle" type="button" aria-expanded={open} aria-controls="site-nav" aria-label="Toggle navigation" onClick={() => setOpen((value) => !value)}>{open ? <X size={21} /> : <Menu size={21} />}</button>
+          <nav className={open ? "site-nav is-open" : "site-nav"} id="site-nav" aria-label="Primary navigation">
+            <a href="#about" onClick={closeMenu}>About</a><a href="#capabilities" onClick={closeMenu}>Capabilities</a><a href="#track-record" onClick={closeMenu}>Track record</a><a href="#investor-portal" onClick={closeMenu}>Investor portal</a>
           </nav>
+          <div className="header-actions"><a className="text-link hide-mobile" href="#contact">Request consultation <span aria-hidden="true">↗</span></a><button className="button button-gold button-compact hide-mobile" type="button" onClick={secureLine}>Secure executive line</button></div>
         </div>
       </header>
 
-      <main id="top">
-        <section className="hero-section" style={{ backgroundImage: `linear-gradient(90deg, rgba(251,250,246,1) 0%, rgba(251,250,246,.98) 42%, rgba(251,250,246,.78) 67%, rgba(251,250,246,.34) 100%), url(${heroImage})` }}>
-          <div className="container-wide hero-content">
-            <div className="hero-copy-column">
-              <div className="hero-kicker"><span className="gold-line" /> Technology-led strategy</div>
-              <h1>Make complex<br /><em>change executable.</em></h1>
-              <p className="hero-copy">TN Advisory brings trade, technology and strategy into one frame—helping decision-makers move from strategic intent to practical, investable action.</p>
-              <div className="hero-actions"><a className="button button-gold" href="#approach">Explore the approach <ArrowUpRight size={17} /></a><a className="text-link" href="#profile">Read the profile <ChevronDown size={16} /></a></div>
-            </div>
-            <figure className="hero-evidence hero-evidence-bridge"><figcaption><span>Selected lens</span><strong>Trade &amp; technology</strong><small>Making systems legible. Making decisions executable.</small></figcaption></figure>
+      <main id="main-content">
+        <section className="hero" id="top" aria-labelledby="hero-title">
+          <div className="hero-grid shell">
+            <div className="hero-copy"><p className="eyebrow"><span className="eyebrow-rule" /> Independent management consultancy</p><h1 id="hero-title">Nairobi. Cape Town.<br /><em>Worldwide.</em></h1><p className="hero-lede">TCN Consultants turns cross-border complexity into clear corporate action — from management execution and administration to commodity trade structures and impact infrastructure.</p><div className="hero-actions"><a className="button button-gold" href="#capabilities">Review capabilities <span aria-hidden="true">↗</span></a><button className="button button-ghost" type="button" onClick={secureLine}>Connect securely <span aria-hidden="true">↗</span></button></div><div className="hero-note"><span className="status-dot" /> Local intelligence / global execution</div></div>
+            <div className="hero-visual" aria-label="Nairobi city skyline representing TCN's East African operating perspective" role="img"><div className="visual-topline"><span>OPERATING FRAME / 01</span><span>NAIROBI → WORLDWIDE</span></div><div className="hero-photo-wrap"><img src="/assets/nairobi.jpg" alt="Nairobi skyline viewed across a green urban foreground at golden hour" /><div className="hero-photo-wash" /><div className="hero-photo-mark"><span>TCN</span><strong>Nairobi</strong><small>East African perspective</small></div><div className="hero-photo-corner"><span>01</span><span>Market intelligence</span></div></div><div className="visual-footer"><span>TRADE · GOVERNANCE · IMPACT</span><span>LOCAL PRECISION / GLOBAL REACH</span></div></div>
           </div>
-          <div className="hero-index">01 <span>/</span> 04</div>
+          <div className="shell hero-bottomline"><span>TCN CONSULTANTS</span><span>Management execution for markets that matter.</span><span>Scroll to explore ↓</span></div>
         </section>
 
-        <section id="approach" className="section approach-section">
-          <div className="container-wide split-grid">
-            <div className="section-label">01 / The proposition</div>
-            <div>
-              <h2>A strategic partner at the intersection of trade, technology and execution.</h2>
-              <p className="large-copy">The opportunity is rarely a lack of ambition. More often, strategy, capital, technology and execution are being managed as separate conversations.</p>
-              <div className="gold-rule" />
-              <p className="body-copy">TN Advisory brings those decisions into one frame. The work is practical by design: clarify the choices, structure the opportunity, and establish the systems and accountability to move forward.</p>
-              <a className="text-link" href="#capabilities">See how the practice connects the dots <ArrowUpRight size={16} /></a>
-            </div>
-          </div>
-        </section>
+        <section className="proof-strip" aria-label="TCN operating lenses"><div className="shell proof-grid"><div className="proof-intro"><span className="proof-kicker">TCN / PROOF SURFACE</span><h2>Three lenses.<br /><em>One accountable frame.</em></h2><p>Built around the work that has to hold: trade, governance and impact infrastructure.</p></div><div className="proof-item"><span>OPERATING LENS / 01</span><strong>Cross-border structures</strong><p>Market-entry, asset positioning and supply-network clarity.</p></div><div className="proof-item"><span>OPERATING LENS / 02</span><strong>Corporate legitimacy</strong><p>Entity administration and governance that survives scrutiny.</p></div><div className="proof-item"><span>OPERATING LENS / 03</span><strong>Impact infrastructure</strong><p>Operating frameworks for social-impact scale.</p></div></div></section>
 
-        <section id="capabilities" className="section capability-section">
-          <div className="container-wide">
-            <div className="practice-intro"><div className="section-label">02 / The practice</div><div><h2>Trade &amp; technology.<br /><em>Made executable.</em></h2><p className="practice-deck">A connected practice for leaders navigating markets, systems and change.</p></div></div>
-            <div className="capability-grid">{capabilities.map((item) => <article key={item.number} className="capability-card"><div className="cap-number">{item.number}</div><div><h3>{item.title}</h3><p>{item.text}</p></div><ArrowUpRight className="cap-arrow" size={18} /></article>)}</div>
-          </div>
-        </section>
+        <section className="locations-section section-light" id="locations" aria-labelledby="locations-title"><div className="shell"><div className="locations-heading"><div className="section-kicker"><span>01</span><span className="kicker-rule" /><span>Geographic perspective</span></div><div className="locations-heading-copy"><h2 id="locations-title">From Nairobi and Cape Town to <em>worldwide.</em></h2><p>We work where markets, institutions and operating realities meet. Regional context is not a footnote; it is part of the execution.</p></div></div><div className="location-grid">{locations.map((location) => <figure className={`location-card ${location.className}`} key={location.label}><img src={location.image} alt={location.alt} loading="lazy" /><figcaption><span>{location.label}</span><strong>{location.title}</strong></figcaption></figure>)}</div></div></section>
 
-        <section id="profile" className="section profile-section">
-          <div className="container-wide profile-grid">
-            <div className="profile-image-wrap profile-image-blend"><img src={detailImage} alt="Advisory desk with technology and trade materials" className="profile-image" /><div className="image-caption">Technology, policy and capital in conversation.</div></div>
-            <div className="profile-copy"><div className="section-label">03 / The advisory practice</div><h2>Grounded in systems.<br /><em>Built for outcomes.</em></h2><p className="large-copy">The practice works across trade finance, digital transformation and development finance, combining computer-science discipline with practical experience in policy, customs systems and software-enabled operating models.</p><div className="profile-facts"><div><span>Based in</span><strong>Nairobi · Cape Town</strong></div><div><span>Focus</span><strong>Africa · Cross-border</strong></div><div><span>Practice</span><strong>Advisory · Software</strong></div></div><a className="text-link" href="#contact">Open an executive conversation <ArrowUpRight size={16} /></a></div>
-          </div>
-        </section>
+        <section className="intro-section section-paper" id="about" aria-labelledby="about-title"><div className="shell intro-grid"><div className="section-kicker"><span>02</span><span className="kicker-rule" /><span>Our point of view</span></div><div className="intro-copy"><h2 id="about-title">A strategy only matters when it survives contact with <em>reality.</em></h2><p className="large-copy">International expansion is rarely limited by ambition. It is constrained by fragmented administration, misaligned operating models and a lack of local intelligence. TCN Consultants brings those moving parts into one accountable frame.</p><p>We work at the intersection of strategy, governance and operational reality — giving boards, investors and enterprise builders the clarity to move decisively across borders.</p><a className="arrow-link" href="#track-record">View our operating lenses <span aria-hidden="true">↗</span></a></div><div className="point-of-view-card"><div className="card-index">TCN / METHOD</div><div className="method-stack"><span>Diagnose</span><span>Structure</span><span>Execute</span></div><p>One integrated lens from strategic intent to operational proof.</p></div></div></section>
 
-        <section id="selected-work" className="section selected-section neuro-section">
-          <div className="container-wide current-project-shell">
-            <div className="section-label">04 / Projects</div>
-            <article className="neuro-tile project-card project-ongoing"><div className="project-status">Ongoing</div><h3>NeuroAccess SA</h3><p>Social-impact platform for access, referral and family support.</p><a className="text-link" href="https://neuroaccesssa.org" target="_blank" rel="noreferrer">View platform <ArrowUpRight size={16} /></a></article>
-          </div>
-        </section>
+        <section className="capabilities-section section-light" id="capabilities" aria-labelledby="capabilities-title"><div className="shell"><div className="section-heading-row"><div><div className="section-kicker"><span>03</span><span className="kicker-rule" /><span>What we do</span></div><h2 id="capabilities-title">Capability with<br /><em>consequence.</em></h2></div><p className="heading-aside">Four integrated pillars. One standard of institutional clarity.</p></div><div className="capability-grid">{capabilities.map((item) => <article className={`capability-card ${item.number === "04" ? "capability-card-dark" : ""}`} key={item.number}><div className="card-topline"><span>{item.number} / 04</span><span className="card-arrow" aria-hidden="true">↗</span></div><div><h3>{item.title}</h3><p>{item.text}</p></div><div className="card-tag">{item.number === "01" ? "BOARD / OPERATING MODEL" : item.number === "02" ? "ENTITY / LEGITIMACY" : item.number === "03" ? "TRADE / SUPPLY NETWORKS" : "IMPACT / SCALE"}</div></article>)}</div></div></section>
 
-        <section id="contact" className="contact-section"><div className="container-wide contact-inner"><div><div className="section-label gold-label">Next step</div><h2>Turn strategic intent<br /><em>into investable action.</em></h2><p className="contact-intro">Share a little context and we’ll respond directly to explore fit, timing and the right first conversation.</p><div className="contact-direct">Prefer email? <a href="mailto:nungotracy@gmail.com">nungotracy@gmail.com <ArrowUpRight size={15} /></a><span>+254 706 478 643 · Nairobi, Kenya</span></div></div><form className="enquiry-form" action="mailto:nungotracy@gmail.com" method="post" encType="text/plain" onSubmit={() => setSubmitted(true)}><div className="form-grid"><label><span>Name</span><input name="name" required autoComplete="name" placeholder="Your name" /></label><label><span>Organisation</span><input name="organisation" autoComplete="organization" placeholder="Organisation or institution" /></label></div><div className="form-grid"><label><span>Email</span><input type="email" name="email" required autoComplete="email" placeholder="you@organisation.com" /></label><label><span>Conversation type</span><select name="conversation" defaultValue=""><option value="" disabled>Select one</option><option>Strategic advisory</option><option>Technology &amp; software</option><option>Trade &amp; development finance</option><option>Social-impact platform</option></select></label></div><label><span>What would you like to explore?</span><textarea name="message" required rows={4} placeholder="Briefly describe the mandate, challenge or opportunity."></textarea></label><button className="button button-gold" type="submit">{submitted ? "Enquiry prepared" : "Prepare enquiry"} <ArrowUpRight size={17} /></button><p className="form-note">Your email client will open with the enquiry prepared for review before sending.</p></form></div></section>
+        <section className="track-record-section section-paper" id="track-record" aria-labelledby="track-record-title"><div className="shell"><div className="section-kicker"><span>04</span><span className="kicker-rule" /><span>Track record</span></div><div className="track-heading"><h2 id="track-record-title">Operating lenses.<br /><em>Real-world stakes.</em></h2><p>Our credibility is built through the complexity we are trusted to hold: cross-border trade structures and impact infrastructure that must work beyond the boardroom.</p></div><div className="case-study-layout"><div className="case-selector" role="tablist" aria-label="Track record case studies"><button className={`case-tab ${caseStudy === "commodities" ? "is-active" : ""}`} type="button" role="tab" aria-selected={caseStudy === "commodities"} onClick={() => setCaseStudy("commodities")}><span>01</span><span><strong>Commodities &amp; finance facilitation</strong><small>Benjamin Commodities Pty Ltd</small></span><span aria-hidden="true">↗</span></button><button className={`case-tab ${caseStudy === "neuro" ? "is-active" : ""}`} type="button" role="tab" aria-selected={caseStudy === "neuro"} onClick={() => setCaseStudy("neuro")}><span>02</span><span><strong>Neurodiversity &amp; impact infrastructure</strong><small>NeuroAccess South Africa</small></span><span aria-hidden="true">↗</span></button><div className="case-selector-note"><span className="status-dot" /> Selected engagement contexts / evidence-led</div></div><div className="case-details">{caseStudy === "commodities" ? <article className="case-panel" role="tabpanel"><div className="case-panel-top"><span className="case-label">Cape Town ↔ Lima</span><span>Cross-border trade structures</span></div><h3>Making complex trade corridors legible, governable and executable.</h3><p>TCN’s executive focus spans global trade structures, asset monetization systems and international supply-chain logistics coordination for high-value commodity operations.</p><dl className="case-facts"><div><dt>Focus</dt><dd>Trade structure / asset positioning</dd></div><div><dt>Lens</dt><dd>Governance through execution</dd></div><div><dt>Context</dt><dd>International market alignment</dd></div></dl><div className="case-graphic trade-graphic"><div className="trade-graphic-grid" /><span className="trade-route route-a" /><span className="trade-route route-b" /><span className="trade-node node-a">CPT</span><span className="trade-node node-b">LIM</span><span className="trade-node node-c">HUB</span><span className="trade-caption">CORRIDOR / 01</span></div></article> : <article className="case-panel" role="tabpanel"><div className="case-panel-top"><span className="case-label">South Africa</span><span>Impact infrastructure</span></div><h3>Turning mission-led ambition into scalable institutional infrastructure.</h3><p>TCN’s executive focus spans corporate governance, scalable organizational architecture and operational frameworks for strategic growth in neurodiversity-focused enterprise.</p><dl className="case-facts"><div><dt>Focus</dt><dd>Governance / organizational scale</dd></div><div><dt>Lens</dt><dd>Impact with operating discipline</dd></div><div><dt>Context</dt><dd>Regional execution / global standards</dd></div></dl><div className="case-graphic impact-graphic"><div className="impact-orbit orbit-one" /><div className="impact-orbit orbit-two" /><span className="impact-node impact-core">NA</span><span className="impact-node impact-top">GOV</span><span className="impact-node impact-right">OPS</span><span className="impact-node impact-left">IMPACT</span><span className="trade-caption">FRAMEWORK / 02</span></div></article>}</div></div></div></section>
+
+        <section className="portal-section" id="investor-portal" aria-labelledby="portal-title"><div className="shell portal-grid"><div className="portal-copy"><div className="section-kicker section-kicker-dark"><span>05</span><span className="kicker-rule" /><span>Investor portal</span></div><h2 id="portal-title">Global infrastructure.<br /><em>Local precision.</em></h2><p>International expansion requires absolute administrative legitimacy and rigorous operational security. TCN Consultants bridges global capital with emerging-market opportunity by combining local intelligence with institutional execution.</p><a className="button button-gold" href="#contact">Initiate an investor briefing <span aria-hidden="true">↗</span></a></div><div className="portal-map portal-photo-map" aria-label="Container port representing global trade corridors" role="img"><img src="/assets/trade-port.jpg" alt="Container port with cranes and cargo ships at night" loading="lazy" /><div className="portal-photo-overlay" /><div className="portal-node portal-node-core"><span>TCN</span></div><div className="portal-node portal-node-cape"><span>CPT</span><small>Cape Town</small></div><div className="portal-node portal-node-lima"><span>LIM</span><small>Lima</small></div><div className="portal-node portal-node-global"><span>GLB</span><small>Global hubs</small></div><div className="portal-map-caption">LOCAL INTELLIGENCE / GLOBAL SHIELD</div></div></div></section>
+
+        <section className="contact-section section-light" id="contact" aria-labelledby="contact-title"><div className="shell contact-grid"><div><div className="section-kicker"><span>06</span><span className="kicker-rule" /><span>Direct briefing</span></div><h2 id="contact-title">Secure your<br /><em>advisory partner.</em></h2><p className="contact-lede">Tell us where the complexity sits. We will bring the right operating lens.</p><div className="direct-contact"><span>Corporate communications</span><a href="mailto:tracy@tcnconsultants.com">tracy@tcnconsultants.com</a></div></div><form className="briefing-form" onSubmit={submitBriefing}><div className="form-intro"><span>REQUEST / 01</span><span>Secure intake</span></div><label htmlFor="name">Name <span>*</span></label><input id="name" name="name" type="text" autoComplete="name" required placeholder="Your name" /><label htmlFor="email">Corporate email <span>*</span></label><input id="email" name="email" type="email" autoComplete="email" required placeholder="name@company.com" /><label htmlFor="region">Region <span>*</span></label><select id="region" name="region" required defaultValue=""><option value="" disabled>Select your region</option><option>East Africa</option><option>Southern Africa</option><option>Latin America</option><option>Europe</option><option>Middle East</option><option>Asia-Pacific</option><option>North America</option><option>Other / global</option></select><input className="honeypot" name="website" type="text" autoComplete="off" tabIndex={-1} aria-hidden="true" /><button className="button button-dark form-submit" type="submit" disabled={submitting}>{submitting ? "Sending…" : "Initiate briefing"} <span aria-hidden="true">↗</span></button><p className="form-status" aria-live="polite">{formStatus}</p></form></div></section>
       </main>
-
-      <footer className="site-footer"><div className="container-wide footer-inner"><img src={fullLogo} alt="TN Advisory" className="full-logo footer-full-logo" /><div className="footer-motto">Technology-led strategy for trade, transformation &amp; development finance</div><div className="footer-meta">© 2026 TN Advisory · Executive advisory practice</div></div></footer>
+      <footer className="site-footer"><div className="shell footer-main"><a className="brand brand-footer" href="#top" aria-label="TCN Consultants home"><span className="brand-mark"><img src="/assets/tcn-mark.png" alt="" /></span><span className="brand-wordmark">TCN <span>CONSULTANTS</span></span></a><p>Management execution for markets that matter.</p><a className="footer-line" href="mailto:tracy@tcnconsultants.com">Initiate secure briefing <span aria-hidden="true">↗</span></a></div><div className="shell footer-bottom"><span>© 2026 TCN Consultants Ltd.</span><span className="footer-policies"><a href="mailto:tracy@tcnconsultants.com?subject=Global%20Code%20of%20Ethics">Global code of ethics</a><a href="mailto:tracy@tcnconsultants.com?subject=Anti-Bribery%20%26%20Corruption%20Policy">Anti-bribery &amp; corruption</a><a href="mailto:tracy@tcnconsultants.com?subject=Data%20Privacy%20Protocol">Data privacy protocol</a></span><span>Nairobi · Cape Town · Worldwide</span></div></footer>
     </div>
   );
 }
